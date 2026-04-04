@@ -5,6 +5,11 @@ import { ScrollReveal } from "@/components/ScrollReveal";
 import type { SiteContentMap } from "@/lib/site-content";
 import type { SiteEditHandlers } from "@/lib/site-edit-props";
 
+function isVideoMediaUrl(url: string): boolean {
+  const path = url.split("?")[0]?.toLowerCase() ?? "";
+  return /\.(mp4|webm|ogg|mov|m4v)$/i.test(path);
+}
+
 type Props = {
   id: string;
   titleKey: string;
@@ -34,7 +39,20 @@ function BentoCell({
   return (
     <div className={`relative overflow-hidden bg-neutral-200 ${minClass}`}>
       {url ? (
-        <Image src={url} alt="" fill className="object-cover" sizes={sizes} />
+        isVideoMediaUrl(url) ? (
+          <video
+            className="absolute inset-0 h-full w-full object-cover"
+            src={url}
+            muted
+            loop
+            playsInline
+            autoPlay
+            preload="metadata"
+            aria-hidden
+          />
+        ) : (
+          <Image src={url} alt="" fill className="object-cover" sizes={sizes} />
+        )
       ) : (
         <div className="flex h-full min-h-[inherit] w-full items-center justify-center text-xs uppercase tracking-wide text-neutral-500">
           Photo
@@ -42,7 +60,7 @@ function BentoCell({
       )}
       {editMode && onUpload ? (
         <label className="absolute bottom-0 left-0 right-0 cursor-pointer bg-black/65 py-2 text-center font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-wide text-white sm:text-xs">
-          Carica
+          Carica foto / video
           <input
             type="file"
             accept="image/*,video/*"

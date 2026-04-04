@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import type { SiteContentMap } from "@/lib/site-content";
 import type { SiteEditHandlers } from "@/lib/site-edit-props";
 import { Button } from "@/components/ui/Button";
@@ -46,6 +47,8 @@ export function Hero({ content, editMode, edit }: Props) {
 
   const center = "relative z-10 flex w-full max-w-4xl flex-col items-center text-center";
 
+  const up = edit?.onUpload;
+
   if (editMode && tc) {
     return (
       <section className={shell}>
@@ -73,39 +76,65 @@ export function Hero({ content, editMode, edit }: Props) {
             rows={4}
             className="w-full max-w-2xl resize-none border border-white/25 bg-black/40 px-3 py-3 text-center font-[family-name:var(--font-inter)] text-base leading-relaxed text-white/95 outline-none sm:text-lg"
           />
-          <div className="flex w-full max-w-xl flex-col gap-3 sm:flex-row sm:items-end">
-            <label className="flex flex-1 flex-col gap-1 text-left font-[family-name:var(--font-inter)] text-[10px] uppercase tracking-wide text-white/60">
-              Video URL
-              <input
-                type="url"
-                value={content["hero.video"] ?? ""}
-                onChange={(e) => tc("hero.video", e.target.value)}
-                className="border border-white/25 bg-black/50 px-2 py-2 text-xs text-white"
-              />
-            </label>
-            <label className="flex flex-1 flex-col gap-1 text-left font-[family-name:var(--font-inter)] text-[10px] uppercase tracking-wide text-white/60">
-              Poster URL
-              <input
-                type="url"
-                value={content["hero.poster"] ?? ""}
-                onChange={(e) => tc("hero.poster", e.target.value)}
-                className="border border-white/25 bg-black/50 px-2 py-2 text-xs text-white"
-              />
-            </label>
-          </div>
-          <label className="cursor-pointer text-xs text-white/70 underline">
-            Carica poster
-            <input
-              type="file"
-              accept="image/*"
-              className="sr-only"
-              onChange={async (e) => {
-                const f = e.target.files?.[0];
-                if (f && edit?.onUpload) await edit.onUpload("hero.poster", f);
-                e.target.value = "";
-              }}
-            />
-          </label>
+          {up ? (
+            <div className="w-full max-w-xl rounded border border-white/20 bg-black/50 p-4 text-left">
+              <p className="mb-3 font-[family-name:var(--font-inter)] text-[10px] uppercase tracking-wide text-white/60">
+                Media (caricamento su Supabase Storage)
+              </p>
+              <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
+                <div className="flex min-w-0 flex-1 flex-col gap-2">
+                  <span className="font-[family-name:var(--font-inter)] text-xs text-white/85">
+                    Video di sfondo
+                  </span>
+                  <label className="inline-flex w-fit cursor-pointer items-center justify-center border border-white/35 bg-white/10 px-4 py-2.5 font-[family-name:var(--font-inter)] text-xs font-semibold uppercase tracking-wide text-white hover:bg-white/15">
+                    Scegli video
+                    <input
+                      type="file"
+                      accept="video/*"
+                      className="sr-only"
+                      onChange={async (e) => {
+                        const f = e.target.files?.[0];
+                        if (f) await up("hero.video", f);
+                        e.target.value = "";
+                      }}
+                    />
+                  </label>
+                  {videoUrl ? (
+                    <p className="truncate font-[family-name:var(--font-inter)] text-[10px] text-white/45" title={videoUrl}>
+                      {videoUrl}
+                    </p>
+                  ) : (
+                    <p className="font-[family-name:var(--font-inter)] text-[10px] text-white/35">Nessun video</p>
+                  )}
+                </div>
+                <div className="flex min-w-0 flex-1 flex-col gap-2">
+                  <span className="font-[family-name:var(--font-inter)] text-xs text-white/85">
+                    Poster (immagine)
+                  </span>
+                  <label className="inline-flex w-fit cursor-pointer items-center justify-center border border-white/35 bg-white/10 px-4 py-2.5 font-[family-name:var(--font-inter)] text-xs font-semibold uppercase tracking-wide text-white hover:bg-white/15">
+                    Scegli immagine
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="sr-only"
+                      onChange={async (e) => {
+                        const f = e.target.files?.[0];
+                        if (f) await up("hero.poster", f);
+                        e.target.value = "";
+                      }}
+                    />
+                  </label>
+                  {posterUrl ? (
+                    <div className="relative mt-1 h-16 w-28 overflow-hidden rounded border border-white/20">
+                      <Image src={posterUrl} alt="" fill className="object-cover" sizes="112px" />
+                    </div>
+                  ) : (
+                    <p className="font-[family-name:var(--font-inter)] text-[10px] text-white/35">Opzionale</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : null}
           <p className="text-[10px] text-white/40">CTA: modifica nella sezione Booking</p>
         </div>
       </section>

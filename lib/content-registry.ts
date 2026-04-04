@@ -35,13 +35,13 @@ export const CONTENT_REGISTRY: ContentEntry[] = [
   },
   {
     element_id: "hero.video",
-    label: "Hero — background video URL",
+    label: "Hero — background video (upload in admin)",
     content_type: "video",
     default_value: "",
   },
   {
     element_id: "hero.poster",
-    label: "Hero — video poster image URL",
+    label: "Hero — poster image (upload in admin)",
     content_type: "image",
     default_value: "",
   },
