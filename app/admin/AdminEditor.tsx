@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CONTENT_REGISTRY, type ContentEntry } from "@/lib/content-registry";
 import type { SiteContentMap } from "@/lib/site-content";
-import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 
 type Props = {
   initialContent: SiteContentMap;
@@ -76,9 +75,11 @@ export function AdminEditor({ initialContent }: Props) {
   const entries = useMemo(() => CONTENT_REGISTRY, []);
 
   async function signOut() {
-    const supabase = createBrowserSupabaseClient();
-    await supabase.auth.signOut();
-    window.location.href = "/login";
+    try {
+      await fetch("/api/auth/signout", { method: "POST" });
+    } finally {
+      window.location.href = "/login";
+    }
   }
 
   return (

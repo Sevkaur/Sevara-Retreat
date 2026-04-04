@@ -8,9 +8,11 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") ?? "/admin";
+  const urlError = searchParams.get("error");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -44,8 +46,13 @@ function LoginForm() {
         Admin login
       </h1>
       <p className="mt-2 font-[family-name:var(--font-inter)] text-sm text-black/80">
-        Sign in with your Supabase Auth user.
+        Accesso riservato. Usa l&apos;account autorizzato (Supabase Auth).
       </p>
+      {urlError === "forbidden" ? (
+        <p className="mt-3 text-sm text-red-700" role="alert">
+          Questo account non è autorizzato per l&apos;admin.
+        </p>
+      ) : null}
       <form onSubmit={onSubmit} className="mt-8 flex flex-col gap-4">
         <label className="flex flex-col gap-1 text-sm font-medium">
           Email
@@ -58,17 +65,28 @@ function LoginForm() {
             className="border border-black px-3 py-2 font-[family-name:var(--font-inter)]"
           />
         </label>
-        <label className="flex flex-col gap-1 text-sm font-medium">
-          Password
-          <input
-            type="password"
-            autoComplete="current-password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="border border-black px-3 py-2 font-[family-name:var(--font-inter)]"
-          />
-        </label>
+        <div className="flex flex-col gap-1">
+          <span className="text-sm font-medium">Password</span>
+          <div className="flex border border-black">
+            <input
+              type={showPassword ? "text" : "password"}
+              autoComplete="current-password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="min-w-0 flex-1 border-0 px-3 py-2 font-[family-name:var(--font-inter)] outline-none"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-pressed={showPassword}
+              aria-label={showPassword ? "Nascondi password" : "Mostra password"}
+              className="shrink-0 border-l border-black bg-neutral-100 px-3 py-2 text-xs font-bold uppercase tracking-wide text-black hover:bg-neutral-200"
+            >
+              {showPassword ? "Nascondi" : "Mostra"}
+            </button>
+          </div>
+        </div>
         {error ? (
           <p className="text-sm text-red-700" role="alert">
             {error}

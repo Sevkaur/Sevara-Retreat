@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { ScrollReveal } from "@/components/ScrollReveal";
 import type { SiteContentMap } from "@/lib/site-content";
 
 type Props = {
@@ -63,13 +64,18 @@ export function BentoSection({ id, titleKey, bodyKey, imageKeys, content, varian
 
         {triple ? (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            {cells.map((cell) => (
-              <BentoCell
+            {cells.map((cell, i) => (
+              <ScrollReveal
                 key={cell.key}
-                url={cell.url}
-                sizes="(max-width: 768px) 100vw, 33vw"
-                minClass="aspect-[4/5] w-full sm:aspect-[3/4]"
-              />
+                delayMs={i * 90}
+                className="min-h-0 w-full"
+              >
+                <BentoCell
+                  url={cell.url}
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  minClass="aspect-[4/5] w-full sm:aspect-[3/4]"
+                />
+              </ScrollReveal>
             ))}
           </div>
         ) : (
@@ -77,31 +83,46 @@ export function BentoSection({ id, titleKey, bodyKey, imageKeys, content, varian
             {cells.map((cell, i) => {
               if (i === 0) {
                 return (
-                  <BentoCell
+                  <ScrollReveal
                     key={cell.key}
-                    url={cell.url}
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    minClass="col-span-2 row-span-2 min-h-[220px] sm:min-h-[320px] md:col-span-2 md:row-span-2"
-                  />
+                    delayMs={0}
+                    className="col-span-2 row-span-2 min-h-0 md:col-span-2 md:row-span-2"
+                  >
+                    <BentoCell
+                      url={cell.url}
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      minClass="min-h-[220px] sm:min-h-[320px] h-full w-full"
+                    />
+                  </ScrollReveal>
                 );
               }
               if (i === 1) {
                 return (
-                  <BentoCell
+                  <ScrollReveal
                     key={cell.key}
-                    url={cell.url}
-                    sizes="(max-width: 768px) 50vw, 25vw"
-                    minClass="col-span-2 min-h-[140px] sm:min-h-[160px] md:col-span-2 md:row-span-1"
-                  />
+                    delayMs={100}
+                    className="col-span-2 min-h-0 md:col-span-2 md:row-span-1"
+                  >
+                    <BentoCell
+                      url={cell.url}
+                      sizes="(max-width: 768px) 50vw, 25vw"
+                      minClass="min-h-[140px] sm:min-h-[160px] h-full w-full"
+                    />
+                  </ScrollReveal>
                 );
               }
               return (
-                <BentoCell
+                <ScrollReveal
                   key={cell.key}
-                  url={cell.url}
-                  sizes="(max-width: 768px) 50vw, 25vw"
-                  minClass="min-h-[140px] sm:min-h-[160px] md:col-span-1 md:row-span-1"
-                />
+                  delayMs={140 + i * 60}
+                  className="min-h-0"
+                >
+                  <BentoCell
+                    url={cell.url}
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                    minClass="min-h-[140px] sm:min-h-[160px] h-full w-full"
+                  />
+                </ScrollReveal>
               );
             })}
           </div>

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { ScrollReveal } from "@/components/ScrollReveal";
 import type { SiteContentMap } from "@/lib/site-content";
 
 type Variant = "light" | "pink";
@@ -66,7 +67,9 @@ export function FeatureSection({
           </p>
         </div>
         {imageBlock ? (
-          <div className={imagePosition === "left" ? "sm:order-1" : ""}>{imageBlock}</div>
+          <div className={imagePosition === "left" ? "sm:order-1" : ""}>
+            <ScrollReveal className="h-full w-full">{imageBlock}</ScrollReveal>
+          </div>
         ) : null}
       </div>
     </section>

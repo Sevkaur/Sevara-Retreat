@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { CONTENT_REGISTRY } from "@/lib/content-registry";
+import { isAllowedAdminEmail } from "@/lib/admin-allowlist";
+import { hasSupabaseEnv, SUPABASE_ENV_HINT } from "@/lib/supabase/env";
 
 export async function POST(request: Request) {
+  if (!hasSupabaseEnv()) {
+    return NextResponse.json({ error: SUPABASE_ENV_HINT }, { status: 503 });
+  }
   try {
     const supabase = await createServerSupabaseClient();
     const {
@@ -10,6 +15,9 @@ export async function POST(request: Request) {
     } = await supabase.auth.getUser();
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!isAllowedAdminEmail(user.email)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const formData = await request.formData();
@@ -65,7 +73,11 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ url: publicUrl });
-  } catch {
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Server error";
+    if (msg.includes("Missing Supabase")) {
+      return NextResponse.json({ error: SUPABASE_ENV_HINT }, { status: 503 });
+    }
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
