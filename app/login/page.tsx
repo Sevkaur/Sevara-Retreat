@@ -48,9 +48,21 @@ function LoginForm() {
       <p className="mt-2 font-[family-name:var(--font-inter)] text-sm text-black/80">
         Accesso riservato. Usa l&apos;account autorizzato (Supabase Auth).
       </p>
+      {urlError === "config" ? (
+        <p className="mt-3 text-sm text-amber-900" role="alert">
+          Il server non ha la lista admin configurata. In{" "}
+          <strong className="font-semibold">Vercel</strong> → progetto → Settings → Environment
+          Variables aggiungi{" "}
+          <code className="rounded bg-black/5 px-1 py-0.5 text-xs">ADMIN_ALLOWED_EMAILS</code>{" "}
+          (es. <code className="rounded bg-black/5 px-1 py-0.5 text-xs">tua@email.com</code>) per
+          Production, poi <strong className="font-semibold">Redeploy</strong>.
+        </p>
+      ) : null}
       {urlError === "forbidden" ? (
         <p className="mt-3 text-sm text-red-700" role="alert">
-          Questo account non è autorizzato per l&apos;admin.
+          Questo account non è nella lista autorizzata. Controlla che l&apos;email in{" "}
+          <code className="rounded bg-black/5 px-1 py-0.5 text-xs">ADMIN_ALLOWED_EMAILS</code>{" "}
+          coincida esattamente con quella dell&apos;account Supabase.
         </p>
       ) : null}
       <form onSubmit={onSubmit} className="mt-8 flex flex-col gap-4">

@@ -1,6 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { isAllowedAdminEmail } from "@/lib/admin-allowlist";
+import { isAllowedAdminEmail, parseAdminAllowlist } from "@/lib/admin-allowlist";
+
+function adminGateError(): "config" | "forbidden" {
+  return parseAdminAllowlist().size === 0 ? "config" : "forbidden";
+}
 
 function redirectToLogin(request: NextRequest, error?: string) {
   const url = request.nextUrl.clone();
@@ -53,7 +57,7 @@ export async function middleware(request: NextRequest) {
     }
     if (!isAllowedAdminEmail(user.email)) {
       await supabase.auth.signOut();
-      return redirectToLogin(request, "forbidden");
+      return redirectToLogin(request, adminGateError());
     }
   }
 
@@ -66,7 +70,7 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(dest);
       }
       await supabase.auth.signOut();
-      return redirectToLogin(request, "forbidden");
+      return redirectToLogin(request, adminGateError());
     }
   }
 
