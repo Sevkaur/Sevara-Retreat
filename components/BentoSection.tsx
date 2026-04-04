@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import type { SiteContentMap } from "@/lib/site-content";
 import type { SiteEditHandlers } from "@/lib/site-edit-props";
@@ -36,8 +37,53 @@ function BentoCell({
   editMode?: boolean;
   onUpload?: (elementId: string, file: File) => Promise<void>;
 }) {
+  const [dropOver, setDropOver] = useState(false);
+  const editable = Boolean(editMode && onUpload);
+
   return (
-    <div className={`relative overflow-hidden bg-neutral-200 ${minClass}`}>
+    <div
+      className={`relative overflow-hidden bg-neutral-200 ${minClass} ${
+        editable && dropOver ? "ring-2 ring-[#FFD1D1] ring-inset" : ""
+      }`}
+      onDragOver={
+        editable
+          ? (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }
+          : undefined
+      }
+      onDragEnter={
+        editable
+          ? (e) => {
+              e.preventDefault();
+              setDropOver(true);
+            }
+          : undefined
+      }
+      onDragLeave={
+        editable
+          ? (e) => {
+              const next = e.relatedTarget as Node | null;
+              if (next && e.currentTarget.contains(next)) return;
+              setDropOver(false);
+            }
+          : undefined
+      }
+      onDrop={
+        editable && onUpload
+          ? async (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setDropOver(false);
+              const file = Array.from(e.dataTransfer.files).find(
+                (f) => f.type.startsWith("image/") || f.type.startsWith("video/")
+              );
+              if (file) await onUpload(cellKey, file);
+            }
+          : undefined
+      }
+    >
       {url ? (
         isVideoMediaUrl(url) ? (
           <video
@@ -58,9 +104,9 @@ function BentoCell({
           Photo
         </div>
       )}
-      {editMode && onUpload ? (
+      {editable && onUpload ? (
         <label className="absolute bottom-0 left-0 right-0 cursor-pointer bg-black/65 py-2 text-center font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-wide text-white sm:text-xs">
-          Carica foto / video
+          Carica foto / video — o trascina qui
           <input
             type="file"
             accept="image/*,video/*"

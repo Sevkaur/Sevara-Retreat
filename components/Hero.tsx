@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useId, useState } from "react";
 import type { SiteContentMap } from "@/lib/site-content";
 import type { SiteEditHandlers } from "@/lib/site-edit-props";
 import { Button } from "@/components/ui/Button";
@@ -10,6 +11,16 @@ type Props = {
   editMode?: boolean;
   edit?: SiteEditHandlers;
 };
+
+function fileLabelFromUrl(url: string): string {
+  try {
+    const path = new URL(url).pathname.split("/").pop() ?? url;
+    return path.length > 36 ? `${path.slice(0, 34)}…` : path;
+  } catch {
+    const seg = url.split("/").pop() ?? url;
+    return seg.length > 36 ? `${seg.slice(0, 34)}…` : seg;
+  }
+}
 
 export function Hero({ content, editMode, edit }: Props) {
   const eyebrow = content["hero.eyebrow"] ?? "";
@@ -48,6 +59,11 @@ export function Hero({ content, editMode, edit }: Props) {
   const center = "relative z-10 flex w-full max-w-4xl flex-col items-center text-center";
 
   const up = edit?.onUpload;
+  const fieldId = useId();
+  const videoInputId = `${fieldId}-video`;
+  const posterInputId = `${fieldId}-poster`;
+  const [videoOver, setVideoOver] = useState(false);
+  const [posterOver, setPosterOver] = useState(false);
 
   if (editMode && tc) {
     return (
@@ -77,59 +93,131 @@ export function Hero({ content, editMode, edit }: Props) {
             className="w-full max-w-2xl resize-none border border-white/25 bg-black/40 px-3 py-3 text-center font-[family-name:var(--font-inter)] text-base leading-relaxed text-white/95 outline-none sm:text-lg"
           />
           {up ? (
-            <div className="w-full max-w-xl rounded border border-white/20 bg-black/50 p-4 text-left">
-              <p className="mb-3 font-[family-name:var(--font-inter)] text-[10px] uppercase tracking-wide text-white/60">
-                Media (caricamento su Supabase Storage)
+            <div className="w-full max-w-2xl rounded border border-white/20 bg-black/55 p-4 text-left">
+              <p className="mb-4 font-[family-name:var(--font-inter)] text-[10px] uppercase tracking-wide text-white/55">
+                Media — salvataggio su Supabase Storage
               </p>
-              <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
-                <div className="flex min-w-0 flex-1 flex-col gap-2">
-                  <span className="font-[family-name:var(--font-inter)] text-xs text-white/85">
-                    Video di sfondo
-                  </span>
-                  <label className="inline-flex w-fit cursor-pointer items-center justify-center border border-white/35 bg-white/10 px-4 py-2.5 font-[family-name:var(--font-inter)] text-xs font-semibold uppercase tracking-wide text-white hover:bg-white/15">
-                    Scegli video
-                    <input
-                      type="file"
-                      accept="video/*"
-                      className="sr-only"
-                      onChange={async (e) => {
-                        const f = e.target.files?.[0];
-                        if (f) await up("hero.video", f);
-                        e.target.value = "";
-                      }}
-                    />
+              <div className="flex flex-col gap-4 sm:flex-row sm:gap-4">
+                <div
+                  className={`flex min-h-[140px] min-w-0 flex-1 flex-col rounded-lg border-2 border-dashed px-3 py-4 transition-colors ${
+                    videoOver
+                      ? "border-[#FFD1D1] bg-white/10"
+                      : "border-white/25 bg-black/40"
+                  }`}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  onDragEnter={(e) => {
+                    e.preventDefault();
+                    setVideoOver(true);
+                  }}
+                  onDragLeave={(e) => {
+                    const next = e.relatedTarget as Node | null;
+                    if (next && e.currentTarget.contains(next)) return;
+                    setVideoOver(false);
+                  }}
+                  onDrop={async (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setVideoOver(false);
+                    const file = Array.from(e.dataTransfer.files).find((f) =>
+                      f.type.startsWith("video/")
+                    );
+                    if (file) await up("hero.video", file);
+                  }}
+                >
+                  <input
+                    id={videoInputId}
+                    type="file"
+                    accept="video/*"
+                    className="sr-only"
+                    onChange={async (e) => {
+                      const f = e.target.files?.[0];
+                      if (f) await up("hero.video", f);
+                      e.target.value = "";
+                    }}
+                  />
+                  <label
+                    htmlFor={videoInputId}
+                    className="flex flex-1 cursor-pointer flex-col items-center justify-center gap-1 text-center"
+                  >
+                    <span className="font-[family-name:var(--font-inter)] text-sm font-semibold text-white">
+                      Carica video
+                    </span>
+                    <span className="font-[family-name:var(--font-inter)] text-[11px] leading-snug text-white/55">
+                      Trascina qui il file oppure clicca per selezionare
+                    </span>
                   </label>
                   {videoUrl ? (
-                    <p className="truncate font-[family-name:var(--font-inter)] text-[10px] text-white/45" title={videoUrl}>
-                      {videoUrl}
+                    <p
+                      className="mt-2 truncate text-center font-[family-name:var(--font-inter)] text-[10px] text-[#FFD1D1]/90"
+                      title={videoUrl}
+                    >
+                      {fileLabelFromUrl(videoUrl)}
                     </p>
-                  ) : (
-                    <p className="font-[family-name:var(--font-inter)] text-[10px] text-white/35">Nessun video</p>
-                  )}
+                  ) : null}
                 </div>
-                <div className="flex min-w-0 flex-1 flex-col gap-2">
-                  <span className="font-[family-name:var(--font-inter)] text-xs text-white/85">
-                    Poster (immagine)
-                  </span>
-                  <label className="inline-flex w-fit cursor-pointer items-center justify-center border border-white/35 bg-white/10 px-4 py-2.5 font-[family-name:var(--font-inter)] text-xs font-semibold uppercase tracking-wide text-white hover:bg-white/15">
-                    Scegli immagine
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="sr-only"
-                      onChange={async (e) => {
-                        const f = e.target.files?.[0];
-                        if (f) await up("hero.poster", f);
-                        e.target.value = "";
-                      }}
-                    />
+
+                <div
+                  className={`flex min-h-[140px] min-w-0 flex-1 flex-col rounded-lg border-2 border-dashed px-3 py-4 transition-colors ${
+                    posterOver
+                      ? "border-[#FFD1D1] bg-white/10"
+                      : "border-white/25 bg-black/40"
+                  }`}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  onDragEnter={(e) => {
+                    e.preventDefault();
+                    setPosterOver(true);
+                  }}
+                  onDragLeave={(e) => {
+                    const next = e.relatedTarget as Node | null;
+                    if (next && e.currentTarget.contains(next)) return;
+                    setPosterOver(false);
+                  }}
+                  onDrop={async (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setPosterOver(false);
+                    const file = Array.from(e.dataTransfer.files).find((f) =>
+                      f.type.startsWith("image/")
+                    );
+                    if (file) await up("hero.poster", file);
+                  }}
+                >
+                  <input
+                    id={posterInputId}
+                    type="file"
+                    accept="image/*"
+                    className="sr-only"
+                    onChange={async (e) => {
+                      const f = e.target.files?.[0];
+                      if (f) await up("hero.poster", f);
+                      e.target.value = "";
+                    }}
+                  />
+                  <label
+                    htmlFor={posterInputId}
+                    className="flex flex-1 cursor-pointer flex-col items-center justify-center gap-1 text-center"
+                  >
+                    <span className="font-[family-name:var(--font-inter)] text-sm font-semibold text-white">
+                      Carica foto
+                    </span>
+                    <span className="font-[family-name:var(--font-inter)] text-[11px] leading-snug text-white/55">
+                      Trascina qui il file oppure clicca per selezionare
+                    </span>
                   </label>
                   {posterUrl ? (
-                    <div className="relative mt-1 h-16 w-28 overflow-hidden rounded border border-white/20">
-                      <Image src={posterUrl} alt="" fill className="object-cover" sizes="112px" />
+                    <div className="relative mx-auto mt-2 h-20 w-32 overflow-hidden rounded border border-white/25">
+                      <Image src={posterUrl} alt="" fill className="object-cover" sizes="128px" />
                     </div>
                   ) : (
-                    <p className="font-[family-name:var(--font-inter)] text-[10px] text-white/35">Opzionale</p>
+                    <p className="mt-2 text-center font-[family-name:var(--font-inter)] text-[10px] text-white/35">
+                      Opzionale — anteprima mentre il video carica
+                    </p>
                   )}
                 </div>
               </div>
