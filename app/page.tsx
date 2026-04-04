@@ -1,6 +1,15 @@
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
-import { FeatureSection } from "@/components/FeatureSection";
+import {
+  LeadSection,
+  EmphasisBand,
+  IncludedGrid,
+  EditorialSplit,
+  BridgeSection,
+  OutcomesGrid,
+  HostsBlock,
+  ClosingStrip,
+} from "@/components/retreat/RetreatBlocks";
 import { BentoSection } from "@/components/BentoSection";
 import { BookingSection } from "@/components/BookingSection";
 import { Footer } from "@/components/Footer";
@@ -16,15 +25,11 @@ export default async function Home() {
       <Navbar />
       <main className="flex flex-1 flex-col">
         <Hero content={content} />
-        <FeatureSection
-          id="retreat"
-          titleKey="retreat.title"
-          bodyKey="retreat.body"
-          imageKey="retreat.image"
-          content={content}
-          variant="light"
-          imagePosition="right"
-        />
+        <LeadSection content={content} />
+        <EmphasisBand content={content} />
+        <IncludedGrid content={content} />
+        <EditorialSplit content={content} />
+        <BridgeSection content={content} />
         <BentoSection
           id="accommodation"
           titleKey="accommodation.title"
@@ -50,6 +55,9 @@ export default async function Home() {
           content={content}
           variant="light"
         />
+        <OutcomesGrid content={content} />
+        <HostsBlock content={content} />
+        <ClosingStrip content={content} />
         <BookingSection id="booking" content={content} />
       </main>
       <Footer content={content} />
