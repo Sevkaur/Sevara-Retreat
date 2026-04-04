@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+:root {
+  --pastel-pink: #ffd1d1;
+  --black: #000000;
+  --white: #ffffff;
+}
+
+@theme inline {
+  --color-pastel-pink: var(--pastel-pink);
+  --color-brand-black: var(--black);
+  --color-brand-white: var(--white);
+  --font-sans: var(--font-inter);
+}
+
+body {
+  background: var(--white);
+  color: var(--black);
+}
