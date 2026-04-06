@@ -7,7 +7,6 @@ import {
   EditorialSplit,
   BridgeSection,
   OutcomesGrid,
-  HostsBlock,
   ClosingStrip,
 } from "@/components/retreat/RetreatBlocks";
 import { BentoSection } from "@/components/BentoSection";
@@ -39,6 +38,7 @@ export default async function Home() {
             "accommodation.bento_2",
             "accommodation.bento_3",
           ]}
+          cellMobileAspects={["aspect-video", "aspect-[4/5]", "aspect-[4/5]"]}
           content={content}
           variant="pink"
         />
@@ -54,9 +54,9 @@ export default async function Home() {
           ]}
           content={content}
           variant="light"
+          swipeLayout
         />
         <OutcomesGrid content={content} />
-        <HostsBlock content={content} />
         <ClosingStrip content={content} />
         <BookingSection id="booking" content={content} />
       </main>

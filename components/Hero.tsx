@@ -280,7 +280,7 @@ export function Hero({ content, editMode, edit }: Props) {
           {eyebrow}
         </p>
         <p className="font-[family-name:var(--font-inter)] text-sm text-white/80 sm:text-base">{dateLine}</p>
-        <h1 className="max-w-[18ch] font-[family-name:var(--font-anton)] text-[clamp(2.25rem,9vw,5rem)] uppercase leading-[0.98] text-[#FFD1D1]">
+        <h1 className="max-w-[18ch] font-[family-name:var(--font-anton)] text-[clamp(2.9rem,9vw,5rem)] uppercase leading-[0.98] text-[#FFD1D1]">
           {title}
         </h1>
         <p className="max-w-2xl font-[family-name:var(--font-inter)] text-base leading-relaxed text-white/95 sm:text-lg md:text-xl">

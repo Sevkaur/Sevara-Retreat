@@ -10,7 +10,6 @@ import {
   EditorialSplit,
   BridgeSection,
   OutcomesGrid,
-  HostsBlock,
   ClosingStrip,
 } from "@/components/retreat/RetreatBlocks";
 import { BentoSection } from "@/components/BentoSection";
@@ -236,15 +235,20 @@ export function AdminEditor({ initialContent }: Props) {
             "accommodation.bento_2",
             "accommodation.bento_3",
           ]}
-          cellSlotLabels={["Riquadro sinistra", "Riquadro centro", "Riquadro destra"]}
+          cellSlotLabels={[
+            "Riquadro sinistra (16:9 mobile)",
+            "Riquadro centro",
+            "Riquadro destra (foto o video)",
+          ]}
+          cellMobileAspects={["aspect-video", "aspect-[4/5]", "aspect-[4/5]"]}
           content={content}
           variant="pink"
           editMode
           edit={edit}
         />
         <AdminSectionHintRow
-          title="Galleria takeaways (mosaico 4 riquadri)"
-          where="Grande a sinistra; in alto a destra un rettangolo; sotto due quadrati. Ordine file: 1 grande sx, 2 alto dx, 3 basso sx, 4 basso dx."
+          title="The Rooms — swipe laterale"
+          where="Scorrimento orizzontale: le foto appaiono alla loro dimensione naturale. Carica le foto nell'ordine in cui vuoi che si vedano."
         />
         <BentoSection
           id="extras"
@@ -257,13 +261,14 @@ export function AdminEditor({ initialContent }: Props) {
             "extras.bento_4",
           ]}
           cellSlotLabels={[
-            "Grande a sinistra (2×2)",
-            "Rettangolo alto a destra",
-            "Quadrato basso sinistra",
-            "Quadrato basso destra",
+            "Foto 1 (prima da sinistra)",
+            "Foto 2",
+            "Foto 3",
+            "Foto 4 (ultima a destra)",
           ]}
           content={content}
           variant="light"
+          swipeLayout
           editMode
           edit={edit}
         />
@@ -272,11 +277,6 @@ export function AdminEditor({ initialContent }: Props) {
           where="Tre card in riga (su mobile impilate): numero, titolo, testo."
         />
         <OutcomesGrid content={content} editMode edit={edit} />
-        <AdminSectionHintRow
-          title="Host / chi siete"
-          where="Fascia rosa con titolo e testo centrato."
-        />
-        <HostsBlock content={content} editMode edit={edit} />
         <AdminSectionHintRow
           title="Chiusura prima del booking"
           where="Riga grande centrata su bianco, sopra la prenotazione."

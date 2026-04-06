@@ -15,6 +15,28 @@ function fieldClass(editing: boolean) {
     : "";
 }
 
+/** Renders **bold** markdown inline. Used in public view only; admin edits raw text. */
+function Rich({ text, className }: { text: string; className?: string }) {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return (
+    <span className={className}>
+      {parts.map((part, i) =>
+        part.startsWith("**") && part.endsWith("**") ? (
+          <strong key={i}>{part.slice(2, -2)}</strong>
+        ) : (
+          part
+        )
+      )}
+    </span>
+  );
+}
+
+const boldHint = (
+  <span className="mt-1 block font-[family-name:var(--font-inter)] text-[10px] text-black/35">
+    Usa **testo** per il grassetto
+  </span>
+);
+
 export function LeadSection({ content, editMode, edit }: E) {
   const body = content["intro.body"] ?? "";
   const tc = edit?.onTextChange;
@@ -22,15 +44,18 @@ export function LeadSection({ content, editMode, edit }: E) {
     <section id="intro" className="w-full scroll-mt-24 bg-white py-20 sm:py-28 md:py-32">
       <ScrollReveal className="mx-auto max-w-3xl px-4 sm:px-6">
         {editMode && tc ? (
-          <textarea
-            value={body}
-            onChange={(e) => tc("intro.body", e.target.value)}
-            rows={6}
-            className={`${fieldClass(true)} font-[family-name:var(--font-inter)] text-lg leading-relaxed text-black sm:text-xl`}
-          />
+          <>
+            <textarea
+              value={body}
+              onChange={(e) => tc("intro.body", e.target.value)}
+              rows={6}
+              className={`${fieldClass(true)} font-[family-name:var(--font-inter)] text-lg leading-relaxed text-black sm:text-xl`}
+            />
+            {boldHint}
+          </>
         ) : (
           <p className="text-center font-[family-name:var(--font-inter)] text-lg leading-[1.75] text-black sm:text-xl md:leading-[1.8]">
-            {body}
+            <Rich text={body} />
           </p>
         )}
       </ScrollReveal>
@@ -59,6 +84,9 @@ export function EmphasisBand({ content, editMode, edit }: E) {
               rows={8}
               className="w-full resize-none border border-white/30 bg-white/10 px-3 py-3 text-left font-[family-name:var(--font-inter)] text-base leading-relaxed outline-none focus:border-white/50 sm:text-lg"
             />
+            <span className="mt-1 block font-[family-name:var(--font-inter)] text-[10px] text-white/50">
+              Usa **testo** per il grassetto
+            </span>
           </>
         ) : (
           <>
@@ -66,7 +94,7 @@ export function EmphasisBand({ content, editMode, edit }: E) {
               {title}
             </h2>
             <p className="mt-8 font-[family-name:var(--font-inter)] text-base leading-relaxed sm:mt-10 sm:text-lg md:text-xl">
-              {body}
+              <Rich text={body} />
             </p>
           </>
         )}
@@ -261,6 +289,7 @@ export function EditorialSplit({ content, editMode, edit }: E) {
                 rows={12}
                 className="w-full resize-none border border-black/15 bg-transparent font-[family-name:var(--font-inter)] text-base leading-relaxed outline-none sm:text-lg"
               />
+              {boldHint}
             </>
           ) : (
             <>
@@ -268,7 +297,7 @@ export function EditorialSplit({ content, editMode, edit }: E) {
                 {title}
               </h2>
               <p className="font-[family-name:var(--font-inter)] text-base leading-relaxed text-black sm:text-lg">
-                {body}
+                <Rich text={body} />
               </p>
             </>
           )}
@@ -299,6 +328,7 @@ export function BridgeSection({ content, editMode, edit }: E) {
               rows={5}
               className="w-full border border-black/15 bg-transparent text-center font-[family-name:var(--font-inter)] text-base outline-none sm:text-lg"
             />
+            {boldHint}
           </>
         ) : (
           <>
@@ -306,7 +336,7 @@ export function BridgeSection({ content, editMode, edit }: E) {
               {title}
             </h2>
             <p className="mt-6 font-[family-name:var(--font-inter)] text-base leading-relaxed text-black/85 sm:mt-8 sm:text-lg">
-              {body}
+              <Rich text={body} />
             </p>
           </>
         )}
@@ -346,14 +376,15 @@ export function OutcomesGrid({ content, editMode, edit }: E) {
                       rows={6}
                       className="w-full border border-black/15 bg-transparent font-[family-name:var(--font-inter)] text-sm leading-relaxed outline-none"
                     />
+                    {boldHint}
                   </>
                 ) : (
                   <>
-                    <h3 className="font-[family-name:var(--font-anton)] text-xl uppercase leading-tight text-[#FFD1D1] sm:text-2xl">
+                    <h3 className="font-[family-name:var(--font-anton)] text-xl uppercase leading-tight text-black sm:text-2xl">
                       {t}
                     </h3>
                     <p className="mt-4 font-[family-name:var(--font-inter)] text-sm leading-relaxed text-black sm:text-base">
-                      {b}
+                      <Rich text={b} />
                     </p>
                   </>
                 )}
@@ -408,15 +439,15 @@ export function ClosingStrip({ content, editMode, edit }: E) {
   const tc = edit?.onTextChange;
   return (
     <section className="w-full bg-white py-14 sm:py-20">
-      <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <div className="mx-auto max-w-6xl px-4 text-center sm:px-6">
         {editMode && tc ? (
           <input
             value={line}
             onChange={(e) => tc("closing.line", e.target.value)}
-            className="w-full border border-black/15 bg-transparent text-center font-[family-name:var(--font-anton)] text-3xl uppercase outline-none sm:text-4xl md:text-5xl"
+            className="w-full border border-black/15 bg-transparent text-center font-[family-name:var(--font-anton)] text-[5rem] uppercase leading-none outline-none sm:text-[7rem] md:text-[9rem]"
           />
         ) : (
-          <p className="font-[family-name:var(--font-anton)] text-3xl uppercase tracking-wide text-[#FFD1D1] sm:text-4xl md:text-5xl">
+          <p className="font-[family-name:var(--font-anton)] text-[5rem] uppercase leading-none tracking-wide text-[#FFD1D1] sm:text-[7rem] md:text-[9rem]">
             {line}
           </p>
         )}
