@@ -25,6 +25,46 @@ type Props = {
   initialContent: SiteContentMap;
 };
 
+function AdminContentHint({ title, where }: { title: string; where: string }) {
+  return (
+    <div className="rounded-lg border border-black/10 bg-neutral-100/95 px-4 py-3 sm:px-5">
+      <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-[0.14em] text-black/45">
+        {title}
+      </p>
+      <p className="mt-1.5 font-[family-name:var(--font-inter)] text-xs leading-relaxed text-black/80">{where}</p>
+    </div>
+  );
+}
+
+function AdminSectionHintRow({ title, where }: { title: string; where: string }) {
+  return (
+    <div className="w-full border-y border-black/[0.06] bg-neutral-50/95">
+      <div className="mx-auto max-w-6xl px-4 py-3 sm:px-6">
+        <AdminContentHint title={title} where={where} />
+      </div>
+    </div>
+  );
+}
+
+function AdminEditBanner() {
+  return (
+    <div className="sticky top-0 z-[200] border-b border-black/10 bg-white/95 shadow-sm backdrop-blur-sm">
+      <div className="mx-auto max-w-6xl px-4 py-4 sm:px-6">
+        <p className="font-[family-name:var(--font-inter)] text-sm leading-relaxed text-black/90">
+          <span className="font-semibold">Modifica contenuti</span> — questa è la{" "}
+          <span className="font-semibold">stessa pagina</span> della home pubblica: stesso ordine e stessi blocchi.
+          Quello che salvi qui è ciò che vedono i visitatori. La{" "}
+          <span className="font-semibold">barra in basso</span> (stato / Esci) non esiste sul sito pubblico.
+        </p>
+        <p className="mt-2 font-[family-name:var(--font-inter)] text-xs leading-relaxed text-black/55">
+          I riquadri grigi spiegano dove compare ogni sezione online. Per foto e video, ogni zona indica il punto esatto
+          in pagina.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 async function saveText(
   element_id: string,
   value: string,
@@ -132,8 +172,8 @@ export function AdminEditor({ initialContent }: Props) {
   return (
     <div className="flex min-h-full flex-col pb-24">
       <div className="fixed bottom-0 left-0 right-0 z-[300] flex items-center justify-between gap-3 border-t border-black bg-white/95 px-4 py-3 font-[family-name:var(--font-inter)] text-sm shadow-[0_-4px_20px_rgba(0,0,0,0.06)] backdrop-blur-sm sm:px-6">
-        <span className="text-black/60">
-          Salvataggio su Supabase · il sito pubblico si aggiorna dopo ogni modifica
+        <span className="max-w-[min(100%,28rem)] text-black/60 sm:max-w-none">
+          Solo admin: salvataggio automatico · pubblico aggiornato subito
         </span>
         <div className="flex items-center gap-3">
           {(status || error) && (
@@ -155,13 +195,38 @@ export function AdminEditor({ initialContent }: Props) {
       </div>
 
       <Navbar />
+      <AdminEditBanner />
       <main className="flex flex-1 flex-col">
         <Hero content={content} editMode edit={edit} />
+        <AdminSectionHintRow
+          title="Paragrafo introduttivo"
+          where="Sotto la hero, testo centrato a colonna singola su sfondo bianco — primo blocco di lettura dopo il video."
+        />
         <LeadSection content={content} editMode edit={edit} />
+        <AdminSectionHintRow
+          title="Fascia enfasi (messaggio forte)"
+          where="Banda rosa pastello a tutta larghezza: titolo + testo lungo. Separa visivamente intro e resto pagina."
+        />
         <EmphasisBand content={content} editMode edit={edit} />
+        <AdminSectionHintRow
+          title="Elenco incluso"
+          where="Sezione bianca con titolo e lista puntata (su desktop due colonne)."
+        />
         <IncludedGrid content={content} editMode edit={edit} />
+        <AdminSectionHintRow
+          title="Storia + media (anchor #story)"
+          where="Due colonne: grande immagine o video a sinistra, titolo e testo a destra. Il menu «Retreat» punta qui."
+        />
         <EditorialSplit content={content} editMode edit={edit} />
+        <AdminSectionHintRow
+          title="Ponte / contesto"
+          where="Blocco centrale bianco tra gallerie: titolo + breve testo (es. ambientazione)."
+        />
         <BridgeSection content={content} editMode edit={edit} />
+        <AdminSectionHintRow
+          title="Galleria accommodation (3 riquadri)"
+          where="Tre colonne su desktop: sinistra, centro, destra. Ogni file occupa solo quel riquadro."
+        />
         <BentoSection
           id="accommodation"
           titleKey="accommodation.title"
@@ -171,10 +236,15 @@ export function AdminEditor({ initialContent }: Props) {
             "accommodation.bento_2",
             "accommodation.bento_3",
           ]}
+          cellSlotLabels={["Riquadro sinistra", "Riquadro centro", "Riquadro destra"]}
           content={content}
           variant="pink"
           editMode
           edit={edit}
+        />
+        <AdminSectionHintRow
+          title="Galleria takeaways (mosaico 4 riquadri)"
+          where="Grande a sinistra; in alto a destra un rettangolo; sotto due quadrati. Ordine file: 1 grande sx, 2 alto dx, 3 basso sx, 4 basso dx."
         />
         <BentoSection
           id="extras"
@@ -186,15 +256,41 @@ export function AdminEditor({ initialContent }: Props) {
             "extras.bento_3",
             "extras.bento_4",
           ]}
+          cellSlotLabels={[
+            "Grande a sinistra (2×2)",
+            "Rettangolo alto a destra",
+            "Quadrato basso sinistra",
+            "Quadrato basso destra",
+          ]}
           content={content}
           variant="light"
           editMode
           edit={edit}
         />
+        <AdminSectionHintRow
+          title="Tre esiti numerati"
+          where="Tre card in riga (su mobile impilate): numero, titolo, testo."
+        />
         <OutcomesGrid content={content} editMode edit={edit} />
+        <AdminSectionHintRow
+          title="Host / chi siete"
+          where="Fascia rosa con titolo e testo centrato."
+        />
         <HostsBlock content={content} editMode edit={edit} />
+        <AdminSectionHintRow
+          title="Chiusura prima del booking"
+          where="Riga grande centrata su bianco, sopra la prenotazione."
+        />
         <ClosingStrip content={content} editMode edit={edit} />
+        <AdminSectionHintRow
+          title="Booking + testo pulsante CTA"
+          where="Titolo, testo e bottone. Il testo del bottone è lo stesso della hero. Anchor #booking."
+        />
         <BookingSection id="booking" content={content} editMode edit={edit} />
+        <AdminSectionHintRow
+          title="Footer"
+          where="Piè di pagina: tagline, email, riga legale."
+        />
       </main>
       <Footer content={content} editMode edit={edit} />
     </div>

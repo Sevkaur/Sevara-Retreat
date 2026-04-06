@@ -71,6 +71,15 @@ export function Hero({ content, editMode, edit }: Props) {
       <section className={shell}>
         {videoBg}
         <div className={`${center} gap-6`}>
+          <div className="w-full max-w-2xl rounded-lg border border-white/20 bg-black/40 px-4 py-3 text-left">
+            <p className="font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-wide text-[#FFD1D1]/90">
+              Hero — primo schermo (come in pubblico)
+            </p>
+            <p className="mt-1.5 font-[family-name:var(--font-inter)] text-xs leading-relaxed text-white/85">
+              Stesso layout dei visitatori: video di sfondo a tutta area, testi al centro. Il pulsante sotto usa il
+              testo della sezione <span className="font-semibold">Booking</span> (#booking).
+            </p>
+          </div>
           <input
             value={eyebrow}
             onChange={(e) => tc("hero.eyebrow", e.target.value)}
@@ -95,8 +104,11 @@ export function Hero({ content, editMode, edit }: Props) {
           />
           {up ? (
             <div className="w-full max-w-2xl rounded border border-white/20 bg-black/55 p-4 text-left">
-              <p className="mb-4 font-[family-name:var(--font-inter)] text-[10px] uppercase tracking-wide text-white/55">
-                Media — salvataggio su Supabase Storage
+              <p className="mb-2 font-[family-name:var(--font-inter)] text-[10px] uppercase tracking-wide text-white/55">
+                Media — upload su Supabase (nessun passaggio da server)
+              </p>
+              <p className="mb-4 font-[family-name:var(--font-inter)] text-[11px] leading-snug text-white/65">
+                Ogni riquadro sotto corrisponde a un punto preciso del video di sfondo pubblico.
               </p>
               <div className="flex flex-col gap-4 sm:flex-row sm:gap-4">
                 <div
@@ -150,6 +162,10 @@ export function Hero({ content, editMode, edit }: Props) {
                       Trascina qui il file oppure clicca per selezionare
                     </span>
                   </label>
+                  <p className="mt-3 font-[family-name:var(--font-inter)] text-[10px] leading-snug text-[#FFD1D1]/80">
+                    <span className="font-semibold text-white/90">Dove si vede:</span> questo file è lo sfondo
+                    a schermo intero dietro titolo e sottotitolo (prima sezione della home).
+                  </p>
                   {videoUrl ? (
                     <>
                       <p
@@ -216,12 +232,16 @@ export function Hero({ content, editMode, edit }: Props) {
                     className="flex flex-1 cursor-pointer flex-col items-center justify-center gap-1 text-center"
                   >
                     <span className="font-[family-name:var(--font-inter)] text-sm font-semibold text-white">
-                      Carica foto
+                      Carica foto (poster)
                     </span>
                     <span className="font-[family-name:var(--font-inter)] text-[11px] leading-snug text-white/55">
                       Trascina qui il file oppure clicca per selezionare
                     </span>
                   </label>
+                  <p className="mt-3 font-[family-name:var(--font-inter)] text-[10px] leading-snug text-[#FFD1D1]/80">
+                    <span className="font-semibold text-white/90">Dove si vede:</span> immagine mostrata sul tag
+                    video come poster (prima del play e mentre carica). Opzionale se il video parte subito.
+                  </p>
                   {posterUrl ? (
                     <>
                       <div className="relative mx-auto mt-2 h-20 w-32 overflow-hidden rounded border border-white/25">

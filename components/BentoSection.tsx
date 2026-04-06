@@ -12,6 +12,8 @@ type Props = {
   titleKey: string;
   bodyKey: string;
   imageKeys: string[];
+  /** In admin: etichetta per ogni cella (ordine = posizione in grid pubblica). */
+  cellSlotLabels?: string[];
   content: SiteContentMap;
   variant: "light" | "pink";
   editMode?: boolean;
@@ -26,6 +28,7 @@ function BentoCell({
   editMode,
   onUpload,
   onClearMedia,
+  slotLabel,
 }: {
   url: string | undefined;
   sizes: string;
@@ -34,6 +37,7 @@ function BentoCell({
   editMode?: boolean;
   onUpload?: (elementId: string, file: File) => Promise<void>;
   onClearMedia?: (elementId: string) => Promise<void>;
+  slotLabel?: string;
 }) {
   const [dropOver, setDropOver] = useState(false);
   const editable = Boolean(editMode && onUpload);
@@ -102,6 +106,11 @@ function BentoCell({
           Photo
         </div>
       )}
+      {editable && slotLabel ? (
+        <span className="absolute right-0 top-0 z-[6] max-w-[min(100%,12rem)] bg-black/75 px-2 py-1 text-right font-[family-name:var(--font-inter)] text-[9px] font-semibold leading-tight text-white/95">
+          {slotLabel}
+        </span>
+      ) : null}
       {editable && url && onClearMedia ? (
         <button
           type="button"
@@ -139,6 +148,7 @@ export function BentoSection({
   titleKey,
   bodyKey,
   imageKeys,
+  cellSlotLabels,
   content,
   variant,
   editMode,
@@ -211,6 +221,7 @@ export function BentoSection({
                   editMode={editMode}
                   onUpload={up}
                   onClearMedia={clear}
+                  slotLabel={cellSlotLabels?.[i]}
                 />
               </ScrollReveal>
             ))}
@@ -233,6 +244,7 @@ export function BentoSection({
                       editMode={editMode}
                       onUpload={up}
                       onClearMedia={clear}
+                      slotLabel={cellSlotLabels?.[i]}
                     />
                   </ScrollReveal>
                 );
@@ -252,6 +264,7 @@ export function BentoSection({
                       editMode={editMode}
                       onUpload={up}
                       onClearMedia={clear}
+                      slotLabel={cellSlotLabels?.[i]}
                     />
                   </ScrollReveal>
                 );
@@ -270,6 +283,7 @@ export function BentoSection({
                     editMode={editMode}
                     onUpload={up}
                     onClearMedia={clear}
+                    slotLabel={cellSlotLabels?.[i]}
                   />
                 </ScrollReveal>
               );
