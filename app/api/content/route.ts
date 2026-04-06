@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { CONTENT_REGISTRY, defaultContentMap } from "@/lib/content-registry";
 import { createAnonClient } from "@/lib/supabase/anon";
@@ -70,6 +71,9 @@ export async function POST(request: Request) {
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
+    revalidatePath("/");
+    revalidatePath("/admin");
 
     return NextResponse.json({ ok: true });
   } catch (e) {

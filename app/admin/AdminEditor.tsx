@@ -88,10 +88,26 @@ export function AdminEditor({ initialContent }: Props) {
     try {
       const url = await uploadFile(elementId, file);
       setContent((prev) => ({ ...prev, [elementId]: url }));
-      setStatus("Salvato");
-      setTimeout(() => setStatus(null), 2000);
+      setStatus("Salvato · aggiornato anche sul sito pubblico");
+      setTimeout(() => setStatus(null), 2500);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload fallito");
+      setStatus(null);
+    }
+  };
+
+  const onClearMedia: NonNullable<SiteEditHandlers["onClearMedia"]> = async (elementId) => {
+    const entry = CONTENT_REGISTRY.find((e) => e.element_id === elementId);
+    if (!entry || (entry.content_type !== "image" && entry.content_type !== "video")) return;
+    setStatus("Rimozione…");
+    setError(null);
+    try {
+      await saveText(elementId, "", entry.content_type);
+      setContent((prev) => ({ ...prev, [elementId]: "" }));
+      setStatus("Rimosso · aggiornato anche sul sito pubblico");
+      setTimeout(() => setStatus(null), 2500);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Errore rimozione");
       setStatus(null);
     }
   };
@@ -120,12 +136,14 @@ export function AdminEditor({ initialContent }: Props) {
     }
   }
 
-  const edit: SiteEditHandlers = { onTextChange, onUpload };
+  const edit: SiteEditHandlers = { onTextChange, onUpload, onClearMedia };
 
   return (
     <div className="flex min-h-full flex-col pb-24">
       <div className="fixed bottom-0 left-0 right-0 z-[300] flex items-center justify-between gap-3 border-t border-black bg-white/95 px-4 py-3 font-[family-name:var(--font-inter)] text-sm shadow-[0_-4px_20px_rgba(0,0,0,0.06)] backdrop-blur-sm sm:px-6">
-        <span className="text-black/60">Anteprima = sito pubblico · modifiche in tempo reale</span>
+        <span className="text-black/60">
+          Salvataggio su Supabase · il sito pubblico si aggiorna dopo ogni modifica
+        </span>
         <div className="flex items-center gap-3">
           {(status || error) && (
             <span

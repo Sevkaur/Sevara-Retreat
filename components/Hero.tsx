@@ -59,6 +59,7 @@ export function Hero({ content, editMode, edit }: Props) {
   const center = "relative z-10 flex w-full max-w-4xl flex-col items-center text-center";
 
   const up = edit?.onUpload;
+  const clear = edit?.onClearMedia;
   const fieldId = useId();
   const videoInputId = `${fieldId}-video`;
   const posterInputId = `${fieldId}-poster`;
@@ -150,12 +151,23 @@ export function Hero({ content, editMode, edit }: Props) {
                     </span>
                   </label>
                   {videoUrl ? (
-                    <p
-                      className="mt-2 truncate text-center font-[family-name:var(--font-inter)] text-[10px] text-[#FFD1D1]/90"
-                      title={videoUrl}
-                    >
-                      {fileLabelFromUrl(videoUrl)}
-                    </p>
+                    <>
+                      <p
+                        className="mt-2 truncate text-center font-[family-name:var(--font-inter)] text-[10px] text-[#FFD1D1]/90"
+                        title={videoUrl}
+                      >
+                        {fileLabelFromUrl(videoUrl)}
+                      </p>
+                      {clear ? (
+                        <button
+                          type="button"
+                          className="mt-2 font-[family-name:var(--font-inter)] text-[10px] font-semibold uppercase tracking-wide text-white/70 underline decoration-white/30 underline-offset-2 hover:text-white"
+                          onClick={() => void clear("hero.video")}
+                        >
+                          Rimuovi video
+                        </button>
+                      ) : null}
+                    </>
                   ) : null}
                 </div>
 
@@ -211,9 +223,20 @@ export function Hero({ content, editMode, edit }: Props) {
                     </span>
                   </label>
                   {posterUrl ? (
-                    <div className="relative mx-auto mt-2 h-20 w-32 overflow-hidden rounded border border-white/25">
-                      <Image src={posterUrl} alt="" fill className="object-cover" sizes="128px" />
-                    </div>
+                    <>
+                      <div className="relative mx-auto mt-2 h-20 w-32 overflow-hidden rounded border border-white/25">
+                        <Image src={posterUrl} alt="" fill className="object-cover" sizes="128px" />
+                      </div>
+                      {clear ? (
+                        <button
+                          type="button"
+                          className="mt-2 font-[family-name:var(--font-inter)] text-[10px] font-semibold uppercase tracking-wide text-white/70 underline decoration-white/30 underline-offset-2 hover:text-white"
+                          onClick={() => void clear("hero.poster")}
+                        >
+                          Rimuovi foto
+                        </button>
+                      ) : null}
+                    </>
                   ) : (
                     <p className="mt-2 text-center font-[family-name:var(--font-inter)] text-[10px] text-white/35">
                       Opzionale — anteprima mentre il video carica

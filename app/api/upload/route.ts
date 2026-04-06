@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { CONTENT_REGISTRY } from "@/lib/content-registry";
 import { isAllowedAdminEmail } from "@/lib/admin-allowlist";
@@ -71,6 +72,9 @@ export async function POST(request: Request) {
     if (dbError) {
       return NextResponse.json({ error: dbError.message }, { status: 500 });
     }
+
+    revalidatePath("/");
+    revalidatePath("/admin");
 
     return NextResponse.json({ url: publicUrl });
   } catch (e) {

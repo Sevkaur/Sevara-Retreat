@@ -3,13 +3,9 @@
 import Image from "next/image";
 import { useState } from "react";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { isVideoMediaUrl } from "@/lib/media-url";
 import type { SiteContentMap } from "@/lib/site-content";
 import type { SiteEditHandlers } from "@/lib/site-edit-props";
-
-function isVideoMediaUrl(url: string): boolean {
-  const path = url.split("?")[0]?.toLowerCase() ?? "";
-  return /\.(mp4|webm|ogg|mov|m4v)$/i.test(path);
-}
 
 type Props = {
   id: string;
@@ -29,6 +25,7 @@ function BentoCell({
   cellKey,
   editMode,
   onUpload,
+  onClearMedia,
 }: {
   url: string | undefined;
   sizes: string;
@@ -36,6 +33,7 @@ function BentoCell({
   cellKey: string;
   editMode?: boolean;
   onUpload?: (elementId: string, file: File) => Promise<void>;
+  onClearMedia?: (elementId: string) => Promise<void>;
 }) {
   const [dropOver, setDropOver] = useState(false);
   const editable = Boolean(editMode && onUpload);
@@ -104,6 +102,19 @@ function BentoCell({
           Photo
         </div>
       )}
+      {editable && url && onClearMedia ? (
+        <button
+          type="button"
+          className="absolute left-0 top-0 z-[5] bg-black/80 px-2 py-1.5 font-[family-name:var(--font-inter)] text-[9px] font-bold uppercase tracking-wide text-white hover:bg-black"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            void onClearMedia(cellKey);
+          }}
+        >
+          Rimuovi
+        </button>
+      ) : null}
       {editable && onUpload ? (
         <label className="absolute bottom-0 left-0 right-0 cursor-pointer bg-black/65 py-2 text-center font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-wide text-white sm:text-xs">
           Carica foto / video — o trascina qui
@@ -148,6 +159,7 @@ export function BentoSection({
   const triple = cells.length === 3;
   const tc = edit?.onTextChange;
   const up = edit?.onUpload;
+  const clear = edit?.onClearMedia;
 
   const headerBlock =
     editMode && tc ? (
@@ -198,6 +210,7 @@ export function BentoSection({
                   cellKey={cell.key}
                   editMode={editMode}
                   onUpload={up}
+                  onClearMedia={clear}
                 />
               </ScrollReveal>
             ))}
@@ -219,6 +232,7 @@ export function BentoSection({
                       cellKey={cell.key}
                       editMode={editMode}
                       onUpload={up}
+                      onClearMedia={clear}
                     />
                   </ScrollReveal>
                 );
@@ -237,6 +251,7 @@ export function BentoSection({
                       cellKey={cell.key}
                       editMode={editMode}
                       onUpload={up}
+                      onClearMedia={clear}
                     />
                   </ScrollReveal>
                 );
@@ -254,6 +269,7 @@ export function BentoSection({
                     cellKey={cell.key}
                     editMode={editMode}
                     onUpload={up}
+                    onClearMedia={clear}
                   />
                 </ScrollReveal>
               );

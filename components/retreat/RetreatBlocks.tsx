@@ -1,7 +1,9 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { isVideoMediaUrl } from "@/lib/media-url";
 import type { SiteContentMap } from "@/lib/site-content";
 import type { SiteEditHandlers } from "@/lib/site-edit-props";
 
@@ -122,50 +124,123 @@ export function IncludedGrid({ content, editMode, edit }: E) {
 }
 
 export function EditorialSplit({ content, editMode, edit }: E) {
+  const [dropOver, setDropOver] = useState(false);
   const title = content["narrative.title"] ?? "";
   const body = content["narrative.body"] ?? "";
   const imageUrl = content["retreat.image"]?.trim();
   const tc = edit?.onTextChange;
+  const up = edit?.onUpload;
+  const clear = edit?.onClearMedia;
 
-  const img = imageUrl ? (
-    <div className="relative aspect-[4/5] w-full overflow-hidden bg-neutral-100 sm:aspect-[3/4]">
-      <Image src={imageUrl} alt="" fill className="object-cover" sizes="(max-width:768px) 100vw, 45vw" />
-      {editMode && edit?.onUpload ? (
-        <label className="absolute bottom-0 left-0 right-0 cursor-pointer bg-black/60 py-2 text-center text-[10px] font-bold uppercase tracking-wide text-white">
-          Carica
+  const img =
+    editMode && up ? (
+      <div
+        className={`relative aspect-[4/5] w-full overflow-hidden bg-neutral-100 sm:aspect-[3/4] ${
+          dropOver ? "ring-2 ring-[#FFD1D1] ring-inset" : ""
+        }`}
+        onDragOver={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+        onDragEnter={(e) => {
+          e.preventDefault();
+          setDropOver(true);
+        }}
+        onDragLeave={(e) => {
+          const next = e.relatedTarget as Node | null;
+          if (next && e.currentTarget.contains(next)) return;
+          setDropOver(false);
+        }}
+        onDrop={async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setDropOver(false);
+          const file = Array.from(e.dataTransfer.files).find(
+            (f) => f.type.startsWith("image/") || f.type.startsWith("video/")
+          );
+          if (file) await up("retreat.image", file);
+        }}
+      >
+        {imageUrl ? (
+          isVideoMediaUrl(imageUrl) ? (
+            <video
+              className="absolute inset-0 h-full w-full object-cover"
+              src={imageUrl}
+              muted
+              loop
+              playsInline
+              autoPlay
+              preload="metadata"
+              aria-hidden
+            />
+          ) : (
+            <Image
+              src={imageUrl}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="(max-width:768px) 100vw, 45vw"
+            />
+          )
+        ) : (
+          <div className="flex h-full min-h-[200px] w-full items-center justify-center">
+            <span className="text-xs uppercase tracking-wide text-neutral-400">Immagine / video</span>
+          </div>
+        )}
+        {imageUrl && clear ? (
+          <button
+            type="button"
+            className="absolute left-0 top-0 z-10 bg-black/80 px-2 py-1.5 font-[family-name:var(--font-inter)] text-[9px] font-bold uppercase tracking-wide text-white hover:bg-black"
+            onClick={(e) => {
+              e.preventDefault();
+              void clear("retreat.image");
+            }}
+          >
+            Rimuovi
+          </button>
+        ) : null}
+        <label className="absolute bottom-0 left-0 right-0 cursor-pointer bg-black/65 py-2 text-center font-[family-name:var(--font-inter)] text-[10px] font-bold uppercase tracking-wide text-white">
+          Carica foto / video — o trascina qui
           <input
             type="file"
-            accept="image/*"
+            accept="image/*,video/*"
             className="sr-only"
             onChange={async (e) => {
               const f = e.target.files?.[0];
-              if (f) await edit.onUpload("retreat.image", f);
+              if (f) await up("retreat.image", f);
               e.target.value = "";
             }}
           />
         </label>
-      ) : null}
-    </div>
-  ) : (
-    <div className="relative flex aspect-[4/5] w-full items-center justify-center overflow-hidden bg-neutral-100 sm:aspect-[3/4]">
-      <span className="text-xs uppercase tracking-wide text-neutral-400">Image</span>
-      {editMode && edit?.onUpload ? (
-        <label className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black/5 text-xs uppercase">
-          Carica immagine
-          <input
-            type="file"
-            accept="image/*"
-            className="sr-only"
-            onChange={async (e) => {
-              const f = e.target.files?.[0];
-              if (f) await edit.onUpload("retreat.image", f);
-              e.target.value = "";
-            }}
+      </div>
+    ) : imageUrl ? (
+      <div className="relative aspect-[4/5] w-full overflow-hidden bg-neutral-100 sm:aspect-[3/4]">
+        {isVideoMediaUrl(imageUrl) ? (
+          <video
+            className="absolute inset-0 h-full w-full object-cover"
+            src={imageUrl}
+            muted
+            loop
+            playsInline
+            autoPlay
+            preload="metadata"
+            aria-hidden
           />
-        </label>
-      ) : null}
-    </div>
-  );
+        ) : (
+          <Image
+            src={imageUrl}
+            alt=""
+            fill
+            className="object-cover"
+            sizes="(max-width:768px) 100vw, 45vw"
+          />
+        )}
+      </div>
+    ) : (
+      <div className="relative flex aspect-[4/5] w-full items-center justify-center overflow-hidden bg-neutral-100 sm:aspect-[3/4]">
+        <span className="text-xs uppercase tracking-wide text-neutral-400">Image</span>
+      </div>
+    );
 
   return (
     <section id="story" className="w-full scroll-mt-24 bg-white py-20 sm:py-28">
