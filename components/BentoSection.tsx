@@ -18,6 +18,8 @@ type Props = {
   cellMobileAspects?: string[];
   /** Se true usa layout orizzontale a swipe con immagini a dimensioni naturali. */
   swipeLayout?: boolean;
+  /** Titolo sezione molto più grande (es. The Rooms). */
+  largeHeading?: boolean;
   content: SiteContentMap;
   variant: "light" | "pink";
   editMode?: boolean;
@@ -283,6 +285,7 @@ export function BentoSection({
   cellSlotLabels,
   cellMobileAspects,
   swipeLayout,
+  largeHeading,
   content,
   variant,
   editMode,
@@ -305,14 +308,18 @@ export function BentoSection({
   const up = edit?.onUpload;
   const clear = edit?.onClearMedia;
 
+  const headingTitleClass = largeHeading
+    ? "text-7xl uppercase leading-[0.95] outline-none focus:border-black/30 sm:text-8xl md:text-9xl"
+    : "text-4xl uppercase leading-tight outline-none focus:border-black/30 sm:text-5xl";
+
   const headerBlock =
     editMode && tc ? (
-      <div className="mb-10 max-w-2xl">
+      <div className={`mb-10 ${largeHeading ? "max-w-5xl" : "max-w-2xl"}`}>
         <textarea
           value={title}
           onChange={(e) => tc(titleKey, e.target.value)}
-          rows={2}
-          className={`mb-4 w-full resize-none border border-black/15 bg-transparent px-1 py-1 font-[family-name:var(--font-anton)] text-4xl uppercase leading-tight outline-none focus:border-black/30 sm:text-5xl ${headingColor}`}
+          rows={largeHeading ? 3 : 2}
+          className={`mb-4 w-full resize-none border border-black/15 bg-transparent px-1 py-1 font-[family-name:var(--font-anton)] ${headingTitleClass} ${headingColor}`}
         />
         <textarea
           value={body}
@@ -322,9 +329,9 @@ export function BentoSection({
         />
       </div>
     ) : (
-      <div className="mb-10 max-w-2xl">
+      <div className={`mb-10 ${largeHeading ? "max-w-5xl" : "max-w-2xl"}`}>
         <h2
-          className={`font-[family-name:var(--font-anton)] text-4xl uppercase leading-tight sm:text-5xl ${headingColor}`}
+          className={`font-[family-name:var(--font-anton)] ${largeHeading ? "text-7xl leading-[0.95] sm:text-8xl md:text-9xl" : "text-4xl leading-tight sm:text-5xl"} uppercase ${headingColor}`}
         >
           {title}
         </h2>

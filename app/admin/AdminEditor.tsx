@@ -15,7 +15,7 @@ import {
 import { BentoSection } from "@/components/BentoSection";
 import { BookingSection } from "@/components/BookingSection";
 import { Footer } from "@/components/Footer";
-import { CONTENT_REGISTRY, type ContentEntry } from "@/lib/content-registry";
+import { CONTENT_REGISTRY, EXTRAS_ROOM_IMAGE_KEYS, type ContentEntry } from "@/lib/content-registry";
 import type { SiteContentMap } from "@/lib/site-content";
 import type { SiteEditHandlers } from "@/lib/site-edit-props";
 import { uploadMediaFromBrowser } from "@/lib/upload-client";
@@ -247,28 +247,25 @@ export function AdminEditor({ initialContent }: Props) {
           edit={edit}
         />
         <AdminSectionHintRow
-          title="The Rooms — swipe laterale"
-          where="Scorrimento orizzontale: le foto appaiono alla loro dimensione naturale. Carica le foto nell'ordine in cui vuoi che si vedano."
+          title="The Rooms — swipe laterale (fino a 50 immagini)"
+          where="Scorrimento orizzontale: fino a 50 slot foto; le immagini appaiono alla dimensione naturale. Carica nell'ordine desiderato (Foto 1 … Foto 50)."
         />
         <BentoSection
           id="extras"
           titleKey="extras.title"
           bodyKey="extras.body"
-          imageKeys={[
-            "extras.bento_1",
-            "extras.bento_2",
-            "extras.bento_3",
-            "extras.bento_4",
-          ]}
-          cellSlotLabels={[
-            "Foto 1 (prima da sinistra)",
-            "Foto 2",
-            "Foto 3",
-            "Foto 4 (ultima a destra)",
-          ]}
+          imageKeys={[...EXTRAS_ROOM_IMAGE_KEYS]}
+          cellSlotLabels={EXTRAS_ROOM_IMAGE_KEYS.map((_, i) =>
+            i === 0
+              ? "Foto 1 (prima a sinistra)"
+              : i === EXTRAS_ROOM_IMAGE_KEYS.length - 1
+                ? `Foto ${i + 1} (ultima a destra)`
+                : `Foto ${i + 1}`
+          )}
           content={content}
           variant="light"
           swipeLayout
+          largeHeading
           editMode
           edit={edit}
         />

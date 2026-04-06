@@ -12,6 +12,7 @@ import {
 import { BentoSection } from "@/components/BentoSection";
 import { BookingSection } from "@/components/BookingSection";
 import { Footer } from "@/components/Footer";
+import { EXTRAS_ROOM_IMAGE_KEYS } from "@/lib/content-registry";
 import { getSiteContent } from "@/lib/site-content";
 
 export const revalidate = 60;
@@ -46,15 +47,11 @@ export default async function Home() {
           id="extras"
           titleKey="extras.title"
           bodyKey="extras.body"
-          imageKeys={[
-            "extras.bento_1",
-            "extras.bento_2",
-            "extras.bento_3",
-            "extras.bento_4",
-          ]}
+          imageKeys={[...EXTRAS_ROOM_IMAGE_KEYS]}
           content={content}
           variant="light"
           swipeLayout
+          largeHeading
         />
         <OutcomesGrid content={content} />
         <ClosingStrip content={content} />

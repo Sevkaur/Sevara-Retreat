@@ -154,30 +154,12 @@ export const CONTENT_REGISTRY: ContentEntry[] = [
     default_value:
       "Tangible rituals, nervous-system tools, and content you can reuse — plus the feeling: I know what I am doing now.",
   },
-  {
-    element_id: "extras.bento_1",
-    label: "Takeaways — tile image 1",
-    content_type: "image",
+  ...Array.from({ length: 50 }, (_, i) => ({
+    element_id: `extras.bento_${i + 1}`,
+    label: `The Rooms — image ${i + 1}`,
+    content_type: "image" as ContentType,
     default_value: "",
-  },
-  {
-    element_id: "extras.bento_2",
-    label: "Takeaways — tile image 2",
-    content_type: "image",
-    default_value: "",
-  },
-  {
-    element_id: "extras.bento_3",
-    label: "Takeaways — tile image 3",
-    content_type: "image",
-    default_value: "",
-  },
-  {
-    element_id: "extras.bento_4",
-    label: "Takeaways — tile image 4",
-    content_type: "image",
-    default_value: "",
-  },
+  })),
   {
     element_id: "outcome.1.title",
     label: "Outcome 1 — title",
@@ -268,6 +250,12 @@ export const CONTENT_REGISTRY: ContentEntry[] = [
     default_value: "hello@sevara-retreat.com",
   },
 ];
+
+/** CMS keys for The Rooms horizontal gallery (50 image slots). */
+export const EXTRAS_ROOM_IMAGE_KEYS = Array.from(
+  { length: 50 },
+  (_, i) => `extras.bento_${i + 1}`
+) as readonly string[];
 
 export function defaultContentMap(): Record<string, string> {
   return Object.fromEntries(

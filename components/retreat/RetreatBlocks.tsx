@@ -118,7 +118,7 @@ export function IncludedGrid({ content, editMode, edit }: E) {
               value={title}
               onChange={(e) => tc("included.title", e.target.value)}
               rows={2}
-              className="mb-10 w-full border border-black/15 bg-transparent px-2 py-2 text-center font-[family-name:var(--font-anton)] text-3xl uppercase outline-none sm:text-4xl"
+              className="mb-10 w-full border border-black/15 bg-transparent px-2 py-2 text-center font-[family-name:var(--font-anton)] text-6xl uppercase leading-tight outline-none sm:text-7xl md:text-8xl"
             />
             <textarea
               value={raw}
@@ -130,7 +130,7 @@ export function IncludedGrid({ content, editMode, edit }: E) {
           </>
         ) : (
           <>
-            <h2 className="text-center font-[family-name:var(--font-anton)] text-3xl uppercase leading-tight sm:text-4xl md:text-5xl md:leading-tight">
+            <h2 className="text-center font-[family-name:var(--font-anton)] text-6xl uppercase leading-tight sm:text-7xl md:text-8xl md:leading-tight">
               <span className="text-[#FFD1D1]">{title}</span>
             </h2>
             <ul className="mt-12 grid gap-4 sm:mt-16 sm:grid-cols-2 sm:gap-x-12 sm:gap-y-5">
@@ -281,7 +281,7 @@ export function EditorialSplit({ content, editMode, edit }: E) {
                 value={title}
                 onChange={(e) => tc("narrative.title", e.target.value)}
                 rows={3}
-                className="w-full resize-none border border-black/15 bg-transparent font-[family-name:var(--font-anton)] text-3xl uppercase leading-tight outline-none sm:text-4xl md:text-5xl"
+                className="w-full resize-none border border-black/15 bg-transparent font-[family-name:var(--font-anton)] text-6xl uppercase leading-tight outline-none sm:text-7xl md:text-8xl"
               />
               <textarea
                 value={body}
@@ -293,7 +293,7 @@ export function EditorialSplit({ content, editMode, edit }: E) {
             </>
           ) : (
             <>
-              <h2 className="font-[family-name:var(--font-anton)] text-3xl uppercase leading-[1.1] text-[#FFD1D1] sm:text-4xl md:text-5xl">
+              <h2 className="font-[family-name:var(--font-anton)] text-6xl uppercase leading-[1.05] text-[#FFD1D1] sm:text-7xl md:text-8xl">
                 {title}
               </h2>
               <p className="font-[family-name:var(--font-inter)] text-base leading-relaxed text-black sm:text-lg">
