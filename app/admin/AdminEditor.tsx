@@ -19,6 +19,7 @@ import { Footer } from "@/components/Footer";
 import { CONTENT_REGISTRY, type ContentEntry } from "@/lib/content-registry";
 import type { SiteContentMap } from "@/lib/site-content";
 import type { SiteEditHandlers } from "@/lib/site-edit-props";
+import { uploadMediaFromBrowser } from "@/lib/upload-client";
 
 type Props = {
   initialContent: SiteContentMap;
@@ -38,16 +39,6 @@ async function saveText(
     const j = await res.json().catch(() => ({}));
     throw new Error((j as { error?: string }).error ?? "Save failed");
   }
-}
-
-async function uploadFile(element_id: string, file: File) {
-  const fd = new FormData();
-  fd.append("file", file);
-  fd.append("element_id", element_id);
-  const res = await fetch("/api/upload", { method: "POST", body: fd });
-  const j = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error((j as { error?: string }).error ?? "Upload failed");
-  return j.url as string;
 }
 
 export function AdminEditor({ initialContent }: Props) {
@@ -86,7 +77,7 @@ export function AdminEditor({ initialContent }: Props) {
     setStatus("Caricamento…");
     setError(null);
     try {
-      const url = await uploadFile(elementId, file);
+      const url = await uploadMediaFromBrowser(elementId, file);
       setContent((prev) => ({ ...prev, [elementId]: url }));
       setStatus("Salvato · aggiornato anche sul sito pubblico");
       setTimeout(() => setStatus(null), 2500);

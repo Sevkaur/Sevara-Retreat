@@ -5,6 +5,7 @@ import { CONTENT_REGISTRY } from "@/lib/content-registry";
 import { isAllowedAdminEmail } from "@/lib/admin-allowlist";
 import { hasSupabaseEnv, SUPABASE_ENV_HINT } from "@/lib/supabase/env";
 
+/** Admin UI uses `uploadMediaFromBrowser` (no Vercel body limit). This route resta per file piccoli / uso manuale. */
 export async function POST(request: Request) {
   if (!hasSupabaseEnv()) {
     return NextResponse.json({ error: SUPABASE_ENV_HINT }, { status: 503 });
